@@ -36,6 +36,8 @@ var monster = {
     y : 0
 };
 var monstersCaught = 0;
+var noOfLives = 5;
+var newMonstersKilled = 0;
 
 var keysDown = {};
 addEventListener ("keydown", function (e) {
@@ -75,6 +77,25 @@ var update = function (modifier) {
             && monster.y <= (hero.y + 32)
 	) {
         ++monstersCaught;
+        ++newMonstersKilled;
+        if (newMonstersKilled  == 10) {
+            newMonstersKilled = 0;
+            hero.speed += 256;
+        }
+        reset();
+    }
+    if (hero.x > canvas.width 
+        || hero.y > canvas.height
+        || hero.x < 0 
+        || hero.y < 0) 
+    {
+        noOfLives -= 1;
+        if (noOfLives == 0) {
+            noOfLives = 5;
+            monstersCaught =  0;
+        }
+        hero.speed = 256;
+        newMonstersKilled = 0;
         reset();
     }
 };
@@ -95,6 +116,7 @@ var render = function() {
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
+	ctx.fillText("Lives Remaining : " + noOfLives, 64, 64);
 };
 
 var main = function() {
