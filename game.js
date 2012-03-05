@@ -38,6 +38,9 @@ var monster = {
 var monstersCaught = 0;
 var noOfLives = 5;
 var newMonstersKilled = 0;
+var collided = false;
+var out = false;
+var waitTime = 0;
 
 var keysDown = {};
 addEventListener ("keydown", function (e) {
@@ -58,6 +61,17 @@ var reset = function() {
 };
 
 var update = function (modifier) {
+    if (collided || out ) {
+        if (waitTime < 30) {
+            ++waitTime;
+            return;
+        }
+        reset();
+        waitTime = 0;
+        collided = false;
+        out = false;
+        return;
+    }
     if (38 in keysDown) {
         hero.y -= hero.speed*modifier;
     }
@@ -82,7 +96,20 @@ var update = function (modifier) {
             newMonstersKilled = 0;
             hero.speed += 256;
         }
-        reset();
+        //reset();
+        collided = true;
+        if (hero.x > monster.x) {
+            hero.x = monster.x + 16;
+        }
+        else {
+            hero.x = monster.x -16;
+        }
+        if (hero.y > monster.y) {
+            hero.y = monster.y + 16;
+        }
+        else {
+            hero.y = monster.y -16;
+        }
     }
     if (hero.x > canvas.width 
         || hero.y > canvas.height
@@ -96,7 +123,20 @@ var update = function (modifier) {
         }
         hero.speed = 256;
         newMonstersKilled = 0;
-        reset();
+        //reset();
+        out = true;
+        if (hero.x < 0) {
+            hero.x = 32;
+        }
+        if (hero.y < 0) {
+            hero.y = 32;
+        }
+        if (hero.x > canvas.width) {
+            hero.x = canvas.width - 32;
+        }
+        if (hero.y > canvas.height) {
+            hero.y = canvas.height - 32;
+        }
     }
 };
 
